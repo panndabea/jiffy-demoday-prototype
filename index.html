@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Jiffy helps presenters run interactive live sessions with fast participant joining, guided activities and instant follow-up through one simple flow."
+    />
+    <title>Jiffy | Interactive Live Sessions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            },
+            colors: {
+              paper: '#f7f7f3',
+              ink: '#08090b',
+              graphite: '#2f3438',
+              muted: '#6e746e',
+              line: 'rgba(8, 9, 11, 0.12)',
+              blue: '#063b8f',
+              blueSoft: '#e8eef8',
+            },
+            boxShadow: {
+              soft: '0 30px 80px rgba(8, 9, 11, 0.08)',
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background:
+          linear-gradient(rgba(8, 9, 11, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(8, 9, 11, 0.04) 1px, transparent 1px),
+          radial-gradient(circle at 76% 0%, rgba(6, 59, 143, 0.08), transparent 38rem),
+          #f7f7f3;
+        background-size: 72px 72px, 72px 72px, auto, auto;
+      }
+
+      .fade-in {
+        animation: fade-in 850ms ease both;
+      }
+
+      .record-i {
+        position: relative;
+        display: inline-block;
+      }
+
+      .record-i::after {
+        content: '';
+        position: absolute;
+        left: 57%;
+        top: 0.105em;
+        width: 0.19em;
+        height: 0.19em;
+        border-radius: 999px;
+        background: #d71920;
+        box-shadow: 0 0 0 rgba(215, 25, 32, 0.3);
+        transform: translateX(-50%);
+        animation: record-pulse 2.2s ease-out infinite;
+      }
+
+      .site-header {
+        left: 0;
+        right: 0;
+        transition:
+          top 260ms ease,
+          left 260ms ease,
+          right 260ms ease,
+          width 260ms ease,
+          transform 260ms ease,
+          border-radius 260ms ease,
+          box-shadow 260ms ease,
+          background-color 260ms ease,
+          border-color 260ms ease;
+      }
+
+      .site-header nav {
+        transition: padding 260ms ease;
+      }
+
+      .section-marker {
+        transition:
+          color 200ms ease,
+          opacity 200ms ease,
+          transform 200ms ease;
+      }
+
+      .section-marker::before {
+        content: '';
+        width: 1.05rem;
+        height: 1px;
+        background: rgba(8, 9, 11, 0.18);
+        transition:
+          width 200ms ease,
+          background-color 200ms ease;
+      }
+
+      .section-marker.is-active {
+        color: #063b8f;
+        opacity: 1;
+        transform: translateX(0.25rem);
+      }
+
+      .section-marker.is-active::before {
+        width: 2.05rem;
+        background: #063b8f;
+      }
+
+      @media (min-width: 768px) {
+        .site-header {
+          left: 50%;
+          right: auto;
+          width: 100%;
+          transform: translateX(-50%);
+        }
+
+        .site-header.is-scrolled {
+          top: 0.75rem;
+          width: min(1120px, calc(100% - 3rem));
+          border-radius: 999px;
+          border: 1px solid rgba(8, 9, 11, 0.14);
+          background-color: rgba(247, 247, 243, 0.62);
+          box-shadow: 0 18px 45px rgba(8, 9, 11, 0.1);
+        }
+
+        .site-header.is-scrolled nav {
+          padding-top: 0.65rem;
+          padding-bottom: 0.65rem;
+        }
+      }
+
+      @keyframes fade-in {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes record-pulse {
+        0% {
+          opacity: 0.95;
+          box-shadow: 0 0 0 0 rgba(215, 25, 32, 0.24);
+        }
+
+        70% {
+          opacity: 1;
+          box-shadow: 0 0 0 0.16em rgba(215, 25, 32, 0);
+        }
+
+        100% {
+          opacity: 0.95;
+          box-shadow: 0 0 0 0 rgba(215, 25, 32, 0);
+        }
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-paper font-sans text-ink antialiased">
+    <header id="siteHeader" class="site-header fixed top-0 z-50 border-b border-line bg-paper/86 backdrop-blur-xl">
+      <nav class="mx-auto flex max-w-[1200px] items-center justify-between px-5 py-4 sm:px-8">
+        <a href="#" class="flex flex-col leading-none" aria-label="Jiffy events home">
+          <span class="text-xl font-extrabold tracking-tight">Jiffy</span>
+          <span class="mt-0.5 text-[0.48rem] font-medium uppercase tracking-[0.26em] text-blue">events</span>
+        </a>
+        <div class="hidden items-center gap-8 text-sm font-medium text-ink/58 md:flex">
+          <a class="transition hover:text-ink" href="#activities">Product</a>
+          <a class="transition hover:text-ink" href="#benefits">Benefits</a>
+          <a class="transition hover:text-ink" href="#flow">Flow</a>
+          <a class="transition hover:text-ink" href="#pricing">Pricing</a>
+        </div>
+        <a
+          href="#create"
+          class="rounded-full border border-ink/16 bg-white/55 px-4 py-2.5 text-sm font-bold text-ink shadow-soft transition hover:border-blue hover:text-blue"
+        >
+          Create session
+        </a>
+      </nav>
+    </header>
+
+    <aside class="fixed left-5 top-1/2 z-40 hidden -translate-y-1/2 xl:block" aria-label="Section navigation">
+      <nav class="grid gap-2.5 text-[0.51rem] font-bold uppercase tracking-[0.19em] text-ink/34">
+        <a class="section-marker flex items-center gap-3 opacity-70" href="#hero" data-section-link="hero">Intro</a>
+        <a class="section-marker flex items-center gap-3 opacity-70" href="#problem" data-section-link="problem">Problem</a>
+        <a class="section-marker flex items-center gap-3 opacity-70" href="#solution" data-section-link="solution">Solution</a>
+        <a class="section-marker flex items-center gap-3 opacity-70" href="#benefits" data-section-link="benefits">Benefits</a>
+        <a class="section-marker flex items-center gap-3 opacity-70" href="#flow" data-section-link="flow">Flow</a>
+        <a class="section-marker flex items-center gap-3 opacity-70" href="#process" data-section-link="process">Process</a>
+        <a class="section-marker flex items-center gap-3 opacity-70" href="#activities" data-section-link="activities">Product</a>
+        <a class="section-marker flex items-center gap-3 opacity-70" href="#pricing" data-section-link="pricing">Pricing</a>
+      </nav>
+    </aside>
+
+    <main>
+      <section id="hero" class="px-5 pb-20 pt-36 sm:px-8 sm:pb-28 sm:pt-44">
+        <div class="mx-auto grid max-w-[1200px] gap-16 lg:grid-cols-[1.18fr_0.82fr] lg:items-end">
+          <div class="fade-in">
+            <p class="mb-8 text-xs font-bold uppercase tracking-[0.34em] text-blue">live facilitation system</p>
+            <h1 class="max-w-5xl text-5xl font-black leading-[0.96] tracking-tight sm:text-7xl lg:text-[5rem]">
+              Engage your audience l<span class="record-i">i</span>ve during presentations.
+            </h1>
+            <p class="mt-8 max-w-2xl text-lg leading-8 text-ink/62 sm:text-xl">
+              Turn every presentation into an interactive session — with instant smartphone joining, live activities and automatic follow-up.
+            </p>
+            <div class="mt-10 flex flex-col gap-4 sm:flex-row">
+              <a href="#create" class="bg-ink px-6 py-4 text-center text-sm font-bold text-white transition hover:bg-blue">
+                Create your first session
+              </a>
+              <a href="#flow" class="border border-ink/16 bg-white/55 px-6 py-4 text-center text-sm font-bold text-ink transition hover:border-ink/42">
+                See the flow
+              </a>
+            </div>
+          </div>
+
+          <div class="fade-in border border-line bg-white/70 p-4 shadow-soft" style="animation-delay: 120ms">
+            <div class="relative grid aspect-[4/5] min-h-[420px] place-items-center overflow-hidden border border-line bg-paper/80">
+              <div class="absolute inset-0 bg-[linear-gradient(rgba(8,9,11,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(8,9,11,0.055)_1px,transparent_1px)] bg-[size:44px_44px]"></div>
+              <div class="absolute inset-8 border border-line"></div>
+              <div class="relative max-w-xs text-center">
+                <p class="text-xs font-bold uppercase tracking-[0.34em] text-blue">Image placeholder</p>
+                <div class="mt-8 h-px bg-line"></div>
+                <div class="mt-8 flex flex-col items-center leading-none text-ink/22">
+                  <span class="text-5xl font-black tracking-tight">Jiffy</span>
+                  <span class="mt-1 text-sm font-medium uppercase tracking-[0.4em] text-blue">events</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="problem" class="border-y border-line bg-white/55 px-5 py-20 sm:px-8 sm:py-28">
+        <div class="mx-auto grid max-w-[1200px] gap-12 lg:grid-cols-[0.82fr_1.18fr]">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-[0.34em] text-blue">Problem</p>
+            <h2 class="mt-5 text-4xl font-black leading-[1.02] tracking-tight sm:text-6xl">
+              Most presentations fail to keep people engaged.
+            </h2>
+          </div>
+          <div class="max-w-2xl border border-line bg-paper/75 p-7 shadow-soft sm:mt-10 sm:p-9">
+            <div class="space-y-5 text-lg leading-8 text-ink/68">
+              <p>Attention drops within minutes.</p>
+              <p>Only a small part of the audience actively participates.</p>
+              <p>Presenters rely on separate tools, manual prompts or awkward pauses to bring people back in.</p>
+              <p>Sharing links or slides quickly becomes a GDPR headache.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="solution" class="px-5 py-20 sm:px-8 sm:py-28">
+        <div class="mx-auto grid max-w-[1200px] gap-12 lg:grid-cols-[0.82fr_1.18fr]">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-[0.34em] text-blue">Solution</p>
+            <h2 class="mt-5 text-4xl font-black leading-[1.02] tracking-tight sm:text-6xl">
+              Make interaction part of how you present.
+            </h2>
+          </div>
+          <div class="max-w-2xl border border-line bg-white/70 p-7 shadow-soft sm:mt-10 sm:p-9">
+            <p class="text-lg leading-8 text-ink/68">
+              Participants join in seconds via link, QR code or session code.
+            </p>
+            <div class="mt-8 grid gap-3 text-base font-semibold text-ink">
+              <p>No app download.</p>
+              <p>No login.</p>
+              <p>Smartphones become interaction devices.</p>
+              <p>Engagement happens during the presentation.</p>
+            </div>
+            <p class="mt-8 border-t border-line pt-6 text-lg font-semibold leading-8 text-blue">
+              One flow for joining, interacting and following up.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="benefits" class="border-y border-line bg-white/55 px-5 py-20 sm:px-8 sm:py-28">
+        <div class="mx-auto max-w-[1200px]">
+          <div class="max-w-4xl">
+            <p class="text-xs font-bold uppercase tracking-[0.34em] text-blue">Benefits</p>
+            <h2 class="mt-5 text-4xl font-black leading-[1.02] tracking-tight sm:text-6xl">
+              Easier for participants. Clearer for moderators.
+            </h2>
+          </div>
+          <div class="mt-14 grid gap-px overflow-hidden border border-line bg-line lg:grid-cols-2">
+            <article class="bg-paper p-8 sm:p-10">
+              <div class="mb-12 text-sm font-bold uppercase tracking-[0.28em] text-blue">Participants</div>
+              <div class="grid gap-5 text-lg font-medium leading-7 text-ink">
+                <p>No app download.</p>
+                <p>No registration or login.</p>
+                <p>Join by QR code, link or session code.</p>
+                <p>Answer polls, questions and quizzes on their phone.</p>
+                <p>Receive links, PDFs and resources directly on their device.</p>
+                <p>See live results on the stage screen.</p>
+              </div>
+            </article>
+            <article class="bg-paper p-8 sm:p-10">
+              <div class="mb-12 text-sm font-bold uppercase tracking-[0.28em] text-blue">Moderators</div>
+              <div class="grid gap-5 text-lg font-medium leading-7 text-ink">
+                <p>Build one program before the session.</p>
+                <p>Control activities from the moderator screen.</p>
+                <p>Show prompts and results on the live stage view.</p>
+                <p>Keep attention without switching tools.</p>
+                <p>Share materials without collecting emails.</p>
+                <p>Send follow-up links and files instantly.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="flow" class="border-y border-line bg-white/55 px-5 py-20 sm:px-8 sm:py-28">
+        <div class="mx-auto max-w-[1200px]">
+          <div class="max-w-4xl">
+            <p class="text-xs font-bold uppercase tracking-[0.34em] text-blue">Flow</p>
+            <h2 class="mt-5 text-4xl font-black leading-[1.02] tracking-tight sm:text-6xl">
+              Before, during and after — connected.
+            </h2>
+          </div>
+          <div class="mt-14 grid gap-px overflow-hidden border border-line bg-line lg:grid-cols-3">
+            <article class="bg-paper p-8 sm:p-10">
+              <div class="mb-16 text-4xl font-black text-blue">01</div>
+              <p class="text-xs font-bold uppercase tracking-[0.28em] text-ink/42">Before</p>
+              <h3 class="mt-4 text-2xl font-bold">Before</h3>
+              <p class="mt-5 text-base leading-7 text-ink/58">Start with a quick icebreaker to get everyone active.</p>
+            </article>
+            <article class="bg-paper p-8 sm:p-10">
+              <div class="mb-16 text-4xl font-black text-blue">02</div>
+              <p class="text-xs font-bold uppercase tracking-[0.28em] text-ink/42">During</p>
+              <h3 class="mt-4 text-2xl font-bold">During</h3>
+              <p class="mt-5 text-base leading-7 text-ink/58">Keep people involved with live questions, votes and prompts.</p>
+            </article>
+            <article class="bg-paper p-8 sm:p-10">
+              <div class="mb-16 text-4xl font-black text-blue">03</div>
+              <p class="text-xs font-bold uppercase tracking-[0.28em] text-ink/42">After</p>
+              <h3 class="mt-4 text-2xl font-bold">After</h3>
+              <p class="mt-5 text-base leading-7 text-ink/58">Share results, resources and next steps instantly.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="process" class="border-y border-line bg-white/55 px-5 py-20 sm:px-8 sm:py-28">
+        <div class="mx-auto max-w-[1200px]">
+          <div class="grid gap-12 lg:grid-cols-[0.74fr_1.26fr]">
+            <div>
+              <p class="text-xs font-bold uppercase tracking-[0.34em] text-blue">How it works</p>
+              <h2 class="mt-5 text-4xl font-black leading-[1.02] tracking-tight sm:text-6xl">A simple flow for live engagement.</h2>
+            </div>
+            <div class="grid gap-4">
+              <div class="grid gap-5 border border-line bg-paper/70 p-6 sm:grid-cols-[8rem_1fr]">
+                <span class="text-sm font-bold uppercase tracking-[0.28em] text-blue">Create</span>
+                <p class="text-lg font-medium">Build the session.</p>
+              </div>
+              <div class="grid gap-5 border border-line bg-paper/70 p-6 sm:grid-cols-[8rem_1fr]">
+                <span class="text-sm font-bold uppercase tracking-[0.28em] text-blue">Invite</span>
+                <p class="text-lg font-medium">Share one QR code.</p>
+              </div>
+              <div class="grid gap-5 border border-line bg-paper/70 p-6 sm:grid-cols-[8rem_1fr]">
+                <span class="text-sm font-bold uppercase tracking-[0.28em] text-blue">Engage</span>
+                <p class="text-lg font-medium">Run live activities.</p>
+              </div>
+              <div class="grid gap-5 border border-line bg-paper/70 p-6 sm:grid-cols-[8rem_1fr]">
+                <span class="text-sm font-bold uppercase tracking-[0.28em] text-blue">Close</span>
+                <p class="text-lg font-medium">Send results.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="activities" class="px-5 py-20 sm:px-8 sm:py-28">
+        <div class="mx-auto max-w-[1200px]">
+          <div class="max-w-4xl">
+            <p class="text-xs font-bold uppercase tracking-[0.34em] text-blue">Product</p>
+            <h2 class="mt-5 text-4xl font-black leading-[1.02] tracking-tight sm:text-6xl">
+              Turn your audience into participants.
+            </h2>
+          </div>
+          <div class="mt-14 border border-line bg-white/45 p-4 shadow-soft">
+            <div class="grid gap-4 md:grid-cols-2">
+              <article class="border border-line bg-paper p-8 sm:p-10">
+                <div class="mb-12 text-sm font-bold uppercase tracking-[0.28em] text-blue">Moderator</div>
+                <h3 class="text-2xl font-bold">Guide the interaction.</h3>
+                <p class="mt-5 max-w-md leading-7 text-ink/58">Use the moderator screen to start activities, ask questions and control the live stage view.</p>
+              </article>
+              <article class="border border-line bg-paper p-8 sm:p-10">
+                <div class="mb-12 text-sm font-bold uppercase tracking-[0.28em] text-blue">Participant</div>
+                <h3 class="text-2xl font-bold">Join and take part.</h3>
+                <p class="mt-5 max-w-md leading-7 text-ink/58">Participants respond, vote and interact on their own device — and see results on the live stage.</p>
+              </article>
+            </div>
+            <article class="mt-4 border border-line bg-paper p-8 sm:p-10">
+              <div class="grid gap-8 md:grid-cols-[0.42fr_1fr] md:items-center">
+                <div class="text-sm font-bold uppercase tracking-[0.28em] text-blue">Connection</div>
+                <div>
+                  <h3 class="text-3xl font-black tracking-tight">No passive audience.</h3>
+                  <p class="mt-4 max-w-xl leading-7 text-ink/58">Just active participation between the stage, the moderator and every device in the room.</p>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="pricing" class="border-y border-line bg-white/55 px-5 py-20 sm:px-8 sm:py-28">
+        <div class="mx-auto max-w-[1200px]">
+          <div class="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-end">
+            <div>
+              <p class="text-xs font-bold uppercase tracking-[0.34em] text-blue">Pricing</p>
+              <h2 class="mt-5 text-4xl font-black leading-[1.02] tracking-tight sm:text-6xl">
+                Start simple. Scale later.
+              </h2>
+            </div>
+            <div class="grid gap-px overflow-hidden border border-line bg-line sm:grid-cols-2">
+              <article class="bg-paper p-8">
+                <p class="text-xs font-bold uppercase tracking-[0.28em] text-ink/42">Mini</p>
+                <h3 class="mt-6 text-3xl font-black">Focused</h3>
+                <p class="mt-5 leading-7 text-ink/58">Up to 3 activities.</p>
+              </article>
+              <article class="bg-paper p-8">
+                <p class="text-xs font-bold uppercase tracking-[0.28em] text-ink/42">Custom</p>
+                <h3 class="mt-6 text-3xl font-black">Custom</h3>
+                <p class="mt-5 leading-7 text-ink/58">Unlimited activities.</p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="create" class="px-5 py-20 sm:px-8 sm:py-28">
+        <div class="mx-auto max-w-[1200px] border border-line bg-white/70 p-8 shadow-soft sm:p-12 lg:p-16">
+          <div class="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end">
+            <div>
+              <p class="text-xs font-bold uppercase tracking-[0.34em] text-blue">Create</p>
+              <h2 class="mt-5 max-w-4xl text-4xl font-black leading-[1.02] tracking-tight sm:text-6xl">
+                Run sessions people actually participate in.
+              </h2>
+            </div>
+            <a href="mailto:contact@jiffy.example" class="bg-ink px-7 py-4 text-center text-sm font-bold text-white transition hover:bg-blue">
+              Create your first session
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="border-t border-line px-5 py-8 sm:px-8">
+      <div class="mx-auto flex max-w-[1200px] flex-col gap-8 text-sm text-ink/48 lg:flex-row lg:items-center lg:justify-between">
+        <a href="#" class="flex flex-col leading-none text-ink">
+          <span class="text-base font-extrabold">Jiffy</span>
+          <span class="mt-0.5 text-[0.46rem] font-medium uppercase tracking-[0.28em] text-blue">events</span>
+        </a>
+        <div class="flex flex-wrap gap-6">
+          <a class="transition hover:text-ink" href="#activities">Product</a>
+          <a class="transition hover:text-ink" href="#benefits">Benefits</a>
+          <a class="transition hover:text-ink" href="#flow">Flow</a>
+          <a class="transition hover:text-ink" href="#pricing">Pricing</a>
+        </div>
+        <div class="flex flex-wrap gap-6">
+          <a class="transition hover:text-ink" href="mailto:contact@jiffy.example">Contact</a>
+          <a class="transition hover:text-ink" href="#">Privacy</a>
+          <a class="transition hover:text-ink" href="#">Imprint</a>
+        </div>
+      </div>
+    </footer>
+    <script>
+      const header = document.getElementById('siteHeader');
+      const updateHeader = () => {
+        header.classList.toggle('is-scrolled', window.scrollY > 16);
+      };
+
+      updateHeader();
+      window.addEventListener('scroll', updateHeader, { passive: true });
+
+      const sectionLinks = [...document.querySelectorAll('[data-section-link]')];
+      const trackedSections = sectionLinks
+        .map((link) => document.getElementById(link.dataset.sectionLink))
+        .filter(Boolean);
+
+      const setActiveSection = (id) => {
+        sectionLinks.forEach((link) => {
+          link.classList.toggle('is-active', link.dataset.sectionLink === id);
+        });
+      };
+
+      const sectionObserver = new IntersectionObserver(
+        (entries) => {
+          const visible = entries
+            .filter((entry) => entry.isIntersecting)
+            .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+          if (visible) {
+            setActiveSection(visible.target.id);
+          }
+        },
+        {
+          rootMargin: '-35% 0px -45% 0px',
+          threshold: [0.12, 0.24, 0.36, 0.48],
+        },
+      );
+
+      trackedSections.forEach((section) => sectionObserver.observe(section));
+      setActiveSection('hero');
+    </script>
+  </body>
+</html>
